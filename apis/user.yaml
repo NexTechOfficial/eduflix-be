@@ -1,0 +1,149 @@
+paths:
+  /user:
+    post:
+      tags:
+        - 'user'
+      summary: 'Add user'
+      description: ''
+      requestBody:
+        description: Send data according to user schema for add user.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: 'object'
+              properties:
+                name:
+                  type: string
+                  default: Manish
+                phone:
+                  type: string
+                  default: 9876543210
+                email:
+                  type: string
+                  default: manish@eduflix.com
+                password:
+                  type: string
+                  default: 'manish'
+                role:
+                  type: string
+                  description: Valid Values =>[ student / admin ]
+                  enum: ['student','admin','teacher']
+                  default: admin
+      responses:
+        201:
+          description: Created
+          content:
+            application/json; charset=utf-8:
+              example:
+                status: 201
+                error: false
+                message: Account Created
+                data:
+                  avatar: null
+                  date_of_birth: null
+                  role: student
+                  refered_by: null
+                  new_user: true
+                  conditions_accepted: false
+                  two_step_verify: false
+                  device_token: null
+                  device_os: null
+                  status: 1
+                  id: '1'
+                  name: Manish
+                  email: manish@eduflix.com
+                  phone: '9876543210'
+                  updated_at: '2023-11-26T14:32:08.583Z'
+                  created_at: '2023-11-26T14:32:08.583Z'
+                  city: null
+    get:
+      tags:
+        - 'user'
+      summary: 'Fetch Users'
+      description: ''
+      parameters:
+        - in: query
+          name: page_num
+          schema:
+            type: integer
+          required: true
+          example: 1
+        - in: query
+          name: row_per_page
+          schema:
+            type: integer
+        - in: 'query'
+          name: sort_type
+          schema:
+            type: string
+            enum: ['DESC', 'ASC']
+          description: 'Select Sort Type'
+        - in: 'query'
+          name: order_by
+          schema:
+            type: string
+            enum: [id, name, status, created_at]
+          description: 'Select Order By'
+        - in: query
+          name: status
+          schema:
+            type: integer
+            enum: [1, 0]
+          description: '1 = active , 0 = inactive'
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: ' Search By Name '
+        - in: query
+          name: role
+          schema:
+            type: string
+          description: ' get users according to role valid => [ "adimin","employee" ] '
+          default: 'employee'
+      responses:
+        200:
+          description: Fetched
+          content:
+            application/json; charset=utf-8:
+              example:
+                status: 200
+                error: false
+                message: Users Fetched
+                data:
+                  total_count: 4
+                  current_count: 4
+                  rows:
+                    - id: '1'
+                      name: Manish Choudhary
+                      avatar: URL/avatar/avatar_1670845349245.jpeg
+                      phone: '1111111111'
+                      email: manish@ycic.com
+                      address: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                      role: admin
+                      status: 1
+                    - id: '2'
+                      name: Mr.Admin
+                      avatar: URL/avatar/avatar_1670845372932.jpeg
+                      phone: '1111111112'
+                      email: admin@ycic.com
+                      address: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                      role: admin
+                      status: 1
+                    - id: '3'
+                      name: rahul
+                      avatar: null
+                      phone: '1111111113'
+                      email: rahul@YCiC.com
+                      address: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                      role: employee
+                      status: 1
+                    - id: '5'
+                      name: deepak
+                      avatar: null
+                      phone: '1111111114'
+                      email: deepak@YCiC.com
+                      address: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                      role: employee
+                      status: 1

@@ -1,0 +1,1 @@
+export * as UserCtrl from './user.controller';
