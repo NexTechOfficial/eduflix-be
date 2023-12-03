@@ -1,4 +1,6 @@
 import {z} from 'zod';
+import { UserRole } from '../utils';
+const ValidRoles = [UserRole.admin,UserRole.student,UserRole.teacher]
 export const UserSchema = z
   .object({
     id: z.number().optional(),
@@ -32,4 +34,11 @@ export const UserSchema = z
         }
         return arg
       }),
+      role:z.string({
+        invalid_type_error:'Role Must Be String',
+        required_error:'Role is Required',
+      }).refine(value=>ValidRoles.includes(value),{
+        message:'Invalid Role Provided!'
+      })
+
   })

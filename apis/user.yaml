@@ -27,7 +27,7 @@ paths:
                   default: 'manish'
                 role:
                   type: string
-                  description: Valid Values =>[ student / admin ]
+                  description: Valid Values =>[ student / admin / teacher ]
                   enum: ['student','admin','teacher']
                   default: admin
       responses:

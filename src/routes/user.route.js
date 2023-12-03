@@ -1,4 +1,4 @@
-import {Router} from 'express'
+import { Router } from 'express'
 import { UserCtrl } from '../controllers'
 export const UserRoutes = Router()
   .get('/', async function (req, res) {

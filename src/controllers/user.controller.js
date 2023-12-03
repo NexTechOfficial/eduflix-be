@@ -13,7 +13,6 @@ const Password_Salt = 10;
 export async function createUser(req, res) {
   try {
     const Result = await UserSchema.safeParseAsync(req.body)
-    console.log("🚀 >>> file: user.controller.js:13 >>> createUser >>> req.body:", req.body);
     if (!Result.success) {
       const Error = PurifyError(Result)
       return res.status(httpStatus.precondition_failed).send({
@@ -28,8 +27,8 @@ export async function createUser(req, res) {
     const Resp = await UserModel.createUser(data);
     return res.status(Resp.status).send(Resp);
   } catch (err) {
-    return res.status(httpStatus.precondition_failed).send({
-      status: httpStatus.precondition_failed,
+    return res.status(httpStatus.internal_server_error).send({
+      status: httpStatus.internal_server_error,
       error: true,
       message: 'Error Creating Account',
       location: 'controller',

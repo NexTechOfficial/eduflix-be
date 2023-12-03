@@ -2,6 +2,28 @@ import DB from '../../database/sqlDB.connect'
 import { BIGINT, STRING, INTEGER, DATEONLY, BOOLEAN, TEXT } from 'sequelize'
 import { UserRole } from '../utils'
 
+/**
+ * @typedef {Object} UserTableType
+ * @property {number} id
+ * @property {string} name
+ * @property {string} avatar
+ * @property {string} phone
+ * @property {string} email
+ * @property {null | string} city
+ * @property {null | Date} date_of_birth
+ * @property {string} password
+ * @property {null | string} password_hash
+ * @property {null | string} refered_by
+ * @property {boolean} new_user
+ * @property {boolean} conditions_accepted
+ * @property {boolean} two_step_verify
+ * @property {null | string} device_token
+ * @property {null | 'ios' | 'android' | 'windows' | 'linux'} device_token
+ * @property {number} status
+ */
+/**
+ * @type {import('sequelize').ModelCtor<import('sequelize').Model<UserTableType, UserTableType>>}
+ */
 export const UserTable = DB.define(
   'user',
   {
@@ -135,13 +157,15 @@ export const UserTable = DB.define(
       defaultValue: 1,
       validate: {
         isIn: {
-          args: [[0, 1, 2]],
+          args: [[-1, 0, 1]],
           msg: 'Invalid Status Value',
         },
       },
     },
   },
   {
+    charset: 'utf8',
+    collate: 'utf8_general_ci',
     tableName: 'user',
     createdAt: 'created_at',
     updatedAt: 'updated_at',
