@@ -1,6 +1,6 @@
 //@ts-check
 const { Location, UserRoles } = require('../../config');
-const { httpStatus, PurifyError , DateFuns } = require('../utils');
+const { httpStatus, PurifyError, DateFuns } = require('../utils');
 const { UserModel } = require('../models');
 const { z } = require('zod');
 /**
@@ -55,12 +55,13 @@ exports.createUser = async function (req, res) {
           }
           return arg;
         }),
-      date_of_birth:  z.string()
-      .refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), {
-        message: 'Invalid date format (YYYY-MM-DD)',
-        path: ['date_of_birth']
-      })
-      .transform((val) => DateFuns.parseDate(val)),
+      date_of_birth: z
+        .string()
+        .refine(val => /^\d{4}-\d{2}-\d{2}$/.test(val), {
+          message: 'Invalid date format (YYYY-MM-DD)',
+          path: ['date_of_birth'],
+        })
+        .transform(val => DateFuns.parseDate(val)),
       type: z
         .string({
           invalid_type_error: 'Type Must Be String',
@@ -87,15 +88,62 @@ exports.createUser = async function (req, res) {
     //sending data to DB and return response
     const { data } = Result;
     const Resp = await UserModel.createUser(data);
-    console.log("🚀 >>> Resp:", Resp);
     return res.status(Resp.status).send(Resp);
   } catch (err) {
-    console.log("🚀 >>> err:", err);
     res.status(httpStatus.precondition_failed).send({
       status: httpStatus.precondition_failed,
       location: Location.controller,
       success: false,
       message: 'Error Creating Account',
+      exception: String(err),
+      error: err,
+    });
+  }
+};
+/**
+ * @param {import('../../global').req} req
+ * @param {import('../../global').res} res
+ */
+exports.verifyOTP = async function (req, res) {
+  try {
+    const Validator = z.object({
+      user_id: z
+        .string({
+          required_error: 'User ID is Required',
+          invalid_type_error: 'User ID be a string',
+        })
+        .refine(str => str.trim().length > 0, {
+          message: 'Empty User ID are not allowed',
+        }),
+      otp: z.coerce
+        .number({
+          invalid_type_error: 'Must Be A Valid OTP',
+          required_error: 'OTP is Required',
+        })
+        .gte(1000, "OTP can't be less then 1000")
+        .lte(9999, "OTP can't be grater then 9999"),
+    });
+    //testing input and return in case of invalid input
+    const Result = await Validator.safeParseAsync(req.body);
+    if (!Result.success) {
+      const Error = PurifyError(Result);
+      return res.status(httpStatus.precondition_failed).send({
+        status: httpStatus.precondition_failed,
+        success: false,
+        message: Error[0].message,
+        data: Error,
+      });
+    }
+    const { data } = Result;
+    const result = await UserModel.verifyOTP(data.user_id, data.otp);
+    if (result.status == httpStatus.success) req.user = result.data.user;
+    return res.status(result.status).send(result);
+  } catch (err) {
+    res.status(httpStatus.precondition_failed).send({
+      status: httpStatus.precondition_failed,
+      location: Location.controller,
+      success: false,
+      message: 'Error Verifing Account',
       exception: String(err),
       error: err,
     });

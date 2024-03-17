@@ -18,16 +18,17 @@ const CounterDef = mongoose.model('Counter', CounterSchema);
 /**
  *
  * @param {string} ModelName
+ * @param {mongoose.ClientSession} Session
  * @returns {Promise<number>}
  */
-exports.generateDocId = async ModelName => {
+exports.generateDocId = async (ModelName, Session) => {
   let ID = await CounterDef.findOneAndUpdate(
     { model_name: ModelName },
     { $inc: { index: 1 } },
-    { new: true }
+    { new: true, session:Session }
   );
   if (!ID) {
-    ID = await new CounterDef({ model_name: ModelName, index: 1 }).save();
+    ID = await new CounterDef({ model_name: ModelName, index: 1 }).save({session:Session});
   }
   return ID.index;
 };

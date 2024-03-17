@@ -74,6 +74,15 @@ const UserDef = new Schema(
       type:Boolean,
       default:false,
     },
+    is_phone_verified:{
+      type:Boolean,
+      default:false,
+    },
+    tick_mark:{
+      type:Number,
+      required:false,
+      default:null,
+    },
     status: {
       type: Number,
       default: Status.ACTIVE,
